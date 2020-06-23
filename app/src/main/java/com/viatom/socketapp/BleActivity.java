@@ -1,6 +1,7 @@
 package com.viatom.socketapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
@@ -45,6 +46,9 @@ public class BleActivity extends AppCompatActivity {
     // lepu 0449 "F1:30:30:34:34:39"
     private String macAddrPro = "F2:31:30:30:30:36";
     private String macAddrEr1 = "D3:A1:B3:75:E8:54";
+
+    /****是否是全速跑*******/
+    private boolean isFullSpeed = false;
 
     private static RxBleClient rxBleClient;
     private static RxBleDevice rxBleDevice;
@@ -199,7 +203,13 @@ public class BleActivity extends AppCompatActivity {
                 case 0:
                     if (connected) {
                         run();
-                        handler.sendEmptyMessageDelayed(0, 500);
+                        if (isFullSpeed) {
+                            /****全速跑*******/
+                        } else {
+                            /****定时跑*******/
+                            handler.sendEmptyMessageDelayed(0, 500);
+                        }
+
                     }
                     break;
                 case 1:
@@ -218,13 +228,13 @@ public class BleActivity extends AppCompatActivity {
         } else if (checkEr1.isChecked()) {
             bytesToWrite = cmd_er1;
         } else {
-            runOnUiThread(()-> {
+            runOnUiThread(() -> {
                 Toast.makeText(this, "please choose device type", Toast.LENGTH_SHORT).show();
             });
             return;
         }
 
-        if (start == 0){
+        if (start == 0) {
             start = System.currentTimeMillis();
         }
 
@@ -254,10 +264,10 @@ public class BleActivity extends AppCompatActivity {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
         String time = format.format(System.currentTimeMillis());
 
-        runOnUiThread(()->{
-            String sumText = String.format("尝试连接次数：%1$d \n连接成功次数：%2$d \n发送命令次数：%3$d \n收到响应次数：%4$d", tryConnect, connectFinsihed, cmdSent, sum/68);
+        runOnUiThread(() -> {
+            String sumText = String.format("尝试连接次数：%1$d \n连接成功次数：%2$d \n发送命令次数：%3$d \n收到响应次数：%4$d", tryConnect, connectFinsihed, cmdSent, sum / 68);
             summary.setText(sumText);
-            logs.add(0,time + " " + s);
+            logs.add(0, time + " " + s);
             adapter.notifyDataSetChanged();
 
         });
@@ -285,13 +295,19 @@ public class BleActivity extends AppCompatActivity {
 
     private void getBytes(byte[] bytes) {
         sum += bytes.length;
-//        if (sum % 68 == 0 || sum % 264 == 0) {
-//            run();
-//        }
+        /****全速跑*******/
+        if (isFullSpeed) {
+            if (sum % 68 == 0 || sum % 264 == 0) {
+                run();
+            }
+        } else {
+
+        }
+
         current = System.currentTimeMillis();
-        runOnUiThread(()->{
+        runOnUiThread(() -> {
             long duration = current - start;
-            float speed =  (float) sum / (current - start);
+            float speed = (float) sum / (current - start);
             msg.setText("sum: " + sum + " duration: " + duration + " speed: " + speed + "kb/s");
         });
     }
