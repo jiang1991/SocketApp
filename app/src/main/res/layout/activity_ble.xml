@@ -25,6 +25,12 @@
             android:text="Checkme Monitor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
+        <CheckBox
+            android:id="@+id/check_is_full_speed"
+            android:text="is_full_speed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <LinearLayout

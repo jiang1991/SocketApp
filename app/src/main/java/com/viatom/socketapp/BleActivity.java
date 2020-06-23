@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -48,7 +49,7 @@ public class BleActivity extends AppCompatActivity {
     private String macAddrEr1 = "D3:A1:B3:75:E8:54";
 
     /****是否是全速跑*******/
-    private boolean isFullSpeed = false;
+    private boolean isFullSpeed = true;
 
     /****设备类型
      * 0-没有设备
@@ -90,6 +91,8 @@ public class BleActivity extends AppCompatActivity {
     @BindView(R.id.logs)
     ListView logView;
 
+    String TAG = "BleActivity";
+
     @OnClick(R.id.ble_connect)
     void bleConnect() {
         connect();
@@ -106,6 +109,16 @@ public class BleActivity extends AppCompatActivity {
         if (checked) {
             checkPro.setChecked(false);
             typeOfDevice = 1;
+        }
+    }
+
+    @OnCheckedChanged(R.id.check_is_full_speed)
+    void isFullSpeedChecked(CompoundButton button, boolean checked) {
+        Log.i(TAG,"isFullSpeedChecked -> "+checked);
+        if (checked) {
+            isFullSpeed = true;
+        } else {
+            isFullSpeed = false;
         }
     }
 
@@ -320,9 +333,9 @@ public class BleActivity extends AppCompatActivity {
         sum += bytes.length;
         /****全速跑*******/
         if (isFullSpeed) {
-             if(sum % getDeviceParam() == 0){
-                 run();
-             }
+            if (sum % getDeviceParam() == 0) {
+                run();
+            }
 //            if (sum % 68 == 0 || sum % 264 == 0) {
 //                run();
 //            }
