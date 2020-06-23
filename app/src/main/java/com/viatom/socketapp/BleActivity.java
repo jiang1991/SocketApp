@@ -49,7 +49,7 @@ public class BleActivity extends AppCompatActivity {
     private String macAddrEr1 = "D3:A1:B3:75:E8:54";
 
     /****是否是全速跑*******/
-    private boolean isFullSpeed = true;
+    private boolean isFullSpeed = false;
 
     /****设备类型
      * 0-没有设备
