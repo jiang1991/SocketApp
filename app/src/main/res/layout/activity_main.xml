@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+<!--    <com.viatom.socketapp.OxiView-->
+<!--        android:id="@+id/oxiview"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="250dp" />-->
+
+
+    <RelativeLayout
+        android:id="@+id/rl_wave"
+        android:layout_width="match_parent"
+        android:layout_height="250dp" />
+
+    <LinearLayout
+        android:layout_alignParentEnd="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="HR: "
+            android:textColor="@color/colorAccent"
+            android:padding="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/hr"
+            android:text="- -"
+            android:textColor="@color/colorPrimary"
+            android:padding="5dp"
+            android:textSize="24sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:padding="5dp"
+            android:text="PR:"
+            android:textColor="@color/colorAccent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/pr"
+            android:text="- -"
+            android:textSize="24sp"
+            android:textColor="@color/colorPrimary"
+            android:padding="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+
+    <ListView
+        android:layout_below="@id/rl_wave"
+        android:id="@+id/logs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:id="@+id/btns"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:text="Connect"
+            android:id="@+id/connect"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:text="Join"
+            android:id="@+id/join"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/send"
+            android:text="Send"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/bt"
+            android:text="BLE"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</RelativeLayout>
