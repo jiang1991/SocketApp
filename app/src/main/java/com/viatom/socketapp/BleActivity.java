@@ -50,6 +50,14 @@ public class BleActivity extends AppCompatActivity {
     /****是否是全速跑*******/
     private boolean isFullSpeed = false;
 
+    /****设备类型
+     * 0-没有设备
+     * 1-ER1
+     * 2-checkme
+     * *******/
+    private int typeOfDevice = 0;
+
+
     private static RxBleClient rxBleClient;
     private static RxBleDevice rxBleDevice;
     private static RxBleConnection rxBleConnection;
@@ -97,6 +105,7 @@ public class BleActivity extends AppCompatActivity {
     void oxiChecked(CompoundButton button, boolean checked) {
         if (checked) {
             checkPro.setChecked(false);
+            typeOfDevice = 1;
         }
     }
 
@@ -104,6 +113,7 @@ public class BleActivity extends AppCompatActivity {
     void proChecked(CompoundButton button, boolean checked) {
         if (checked) {
             checkEr1.setChecked(false);
+            typeOfDevice = 2;
         }
     }
 
@@ -260,12 +270,25 @@ public class BleActivity extends AppCompatActivity {
         }
     }
 
+    private int getDeviceParam() {
+        if (typeOfDevice == 1) {
+            /****ER1*******/
+            return 68;
+        } else if (typeOfDevice == 2) {
+            /****checkme*******/
+            return 264;
+        }
+
+        return 0;
+
+    }
+
     private void addLogs(String s) {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
         String time = format.format(System.currentTimeMillis());
 
         runOnUiThread(() -> {
-            String sumText = String.format("尝试连接次数：%1$d \n连接成功次数：%2$d \n发送命令次数：%3$d \n收到响应次数：%4$d", tryConnect, connectFinsihed, cmdSent, sum / 68);
+            String sumText = String.format("尝试连接次数：%1$d \n连接成功次数：%2$d \n发送命令次数：%3$d \n收到响应次数：%4$d", tryConnect, connectFinsihed, cmdSent, sum / getDeviceParam());
             summary.setText(sumText);
             logs.add(0, time + " " + s);
             adapter.notifyDataSetChanged();
@@ -297,9 +320,12 @@ public class BleActivity extends AppCompatActivity {
         sum += bytes.length;
         /****全速跑*******/
         if (isFullSpeed) {
-            if (sum % 68 == 0 || sum % 264 == 0) {
-                run();
-            }
+             if(sum % getDeviceParam() == 0){
+                 run();
+             }
+//            if (sum % 68 == 0 || sum % 264 == 0) {
+//                run();
+//            }
         } else {
 
         }
