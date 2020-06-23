@@ -45,8 +45,10 @@ public class BleActivity extends AppCompatActivity {
     // "DB:AA:6C:51:E4:73"     "F2:31:30:30:30:36" => 0006         "D3:E5:B4:5E:1F:76" => er1 2126   "D4:7E:CB:63:91:B6" => 0000
     // bm88 "CA:FC:47:3E:2B:F7"
     // lepu 0449 "F1:30:30:34:34:39"
+
+    // "F8:97:C4:40:B5:0C"-> ER1 0244
     private String macAddrPro = "F2:31:30:30:30:36";
-    private String macAddrEr1 = "D3:A1:B3:75:E8:54";
+    private String macAddrEr1 = "F8:97:C4:40:B5:0C";
 
     /****是否是全速跑*******/
     private boolean isFullSpeed = false;
