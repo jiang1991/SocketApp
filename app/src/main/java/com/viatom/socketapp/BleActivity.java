@@ -116,7 +116,7 @@ public class BleActivity extends AppCompatActivity {
 
     @OnCheckedChanged(R.id.check_is_full_speed)
     void isFullSpeedChecked(CompoundButton button, boolean checked) {
-        Log.i(TAG,"isFullSpeedChecked -> "+checked);
+        Log.i(TAG, "isFullSpeedChecked -> " + checked);
         if (checked) {
             isFullSpeed = true;
         } else {
@@ -298,11 +298,28 @@ public class BleActivity extends AppCompatActivity {
 
     }
 
+
+    private void setMyLogs() {
+       StringBuffer  sb= new StringBuffer("");
+         if (typeOfDevice == 1) {
+            //ER1
+            sb.append("ER1");
+
+        } else if (typeOfDevice == 2) {
+            //checkme
+            sb.append("checkme");
+        }
+        sb.append(" ");
+        sb.append(getDeviceParam());
+        Log.i(TAG,sb.toString());
+    }
+
     private void addLogs(String s) {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
         String time = format.format(System.currentTimeMillis());
 
         runOnUiThread(() -> {
+            setMyLogs();
             String sumText = String.format("尝试连接次数：%1$d \n连接成功次数：%2$d \n发送命令次数：%3$d \n收到响应次数：%4$d", tryConnect, connectFinsihed, cmdSent, sum / getDeviceParam());
             summary.setText(sumText);
             logs.add(0, time + " " + s);
