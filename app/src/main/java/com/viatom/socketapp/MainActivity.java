@@ -1,6 +1,7 @@
 package com.viatom.socketapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -22,6 +23,7 @@ import org.json.JSONObject;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+
 import android.util.Base64;
 import android.widget.RelativeLayout;
 
@@ -135,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                 float[] temp = DataController.draw(5);
                 if (temp != null) {
                     DataController.feed(temp);
-                    runOnUiThread(()->oxiView.invalidate());
+                    runOnUiThread(() -> oxiView.invalidate());
                 }
             }
         };
@@ -163,8 +165,11 @@ public class MainActivity extends AppCompatActivity {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
         String time = format.format(System.currentTimeMillis());
 
-        runOnUiThread(()->{
-            logs.add(0,time + " " + s);
+        runOnUiThread(() -> {
+            logs.add(0, time + " " + s);
+            if (logs.size() > 20) {
+                logs.remove(logs.size()-1);
+            }
             adapter.notifyDataSetChanged();
         });
     }
