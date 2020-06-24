@@ -173,7 +173,7 @@ public class BleActivity extends AppCompatActivity {
             @Override
             public void call(Object... args) {
 //                mSocket.emit("foo", "hi");
-                addLogs("connected");
+                addLogs("mSocket connected");
                 /****连接成功*******/
                 joinChannel();
 
@@ -200,20 +200,20 @@ public class BleActivity extends AppCompatActivity {
 
             @Override
             public void call(Object... args) {
-                addLogs("disconnected");
+                addLogs("mSocket disconnected");
             }
 
         });
         mSocket.on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                addLogs("connect error");
+                addLogs("mSocket connect error");
             }
         });
         mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                addLogs("connect timeout");
+                addLogs("mSocket connect timeout");
             }
         });
 
