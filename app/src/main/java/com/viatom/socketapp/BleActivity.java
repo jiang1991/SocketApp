@@ -7,12 +7,16 @@ import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import io.reactivex.disposables.Disposable;
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Base64;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -26,12 +30,22 @@ import com.polidea.rxandroidble2.RxBleClient;
 import com.polidea.rxandroidble2.RxBleConnection;
 import com.polidea.rxandroidble2.RxBleDevice;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.UUID;
 
 public class BleActivity extends AppCompatActivity {
+
+
+    private Socket mSocket;
+
+    private String CHANNEL = "SleepO2 0001";
+    private String MSG = "";
 
     // pro
     private UUID write_uuid = UUID.fromString("8B00ACE7-EB0B-49B0-BBE9-9AEE0A26E1A3");
@@ -94,6 +108,113 @@ public class BleActivity extends AppCompatActivity {
     ListView logView;
 
     String TAG = "BleActivity";
+
+
+    /****添加socket代码begin*******/
+
+    private void iniMsg() {
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("channel", CHANNEL);
+//            obj.put("sn", "123456");
+            obj.put("name", CHANNEL);
+            obj.put("dataType", "pulse wave");
+            obj.put("data", "I am base64string");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            addLogs(e.toString());
+        }
+        MSG = obj.toString();
+    }
+
+
+    private void joinChannel() {
+        if (mSocket != null && mSocket.connected()) {
+            mSocket.emit("join", CHANNEL);
+            addLogs("join: " + CHANNEL);
+
+            //startTimer();
+        }
+    }
+
+
+    public void socketConnect() {
+        IO.Options opts = new IO.Options();
+        opts.forceNew = true;
+        opts.reconnection = false;
+
+        try {
+            // http://chat.socket.io  => http://socket.viatomtech.com.cn/socket.io/
+            mSocket = IO.socket("http://socket.viatomtech.com.cn/", opts);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            addLogs(e.toString());
+        }
+
+        mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+//                mSocket.emit("foo", "hi");
+                addLogs("connected");
+            }
+
+        });
+        mSocket.on("data", new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+                String s = (String) args[0];
+                try {
+                    JSONObject object = new JSONObject(s);
+                    onDataReceived(object);
+                } catch (JSONException e) {
+                    addLogs(e.toString());
+                }
+//                addLogs("receive: " + object.toString());
+                addLogs("receive: " + args[0]);
+            }
+
+        });
+        mSocket.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+                addLogs("disconnected");
+            }
+
+        });
+        mSocket.on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                addLogs("connect error");
+            }
+        });
+        mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                addLogs("connect timeout");
+            }
+        });
+
+        mSocket.connect();
+    }
+
+
+    private void onDataReceived(JSONObject obj) {
+        String channel = obj.optString("channel");
+        String name = obj.optString("name");
+        String dataTyoe = obj.optString("dataType");
+        String b64str = obj.optString("data");
+
+        byte[] waveBytes = Base64.decode(b64str, Base64.DEFAULT);
+        Wavedata data = new Wavedata(waveBytes);
+        DataController.receive(data.getFs());
+    }
+    /****添加socket代码end*******/
+
+
+
 
     @OnClick(R.id.ble_connect)
     void bleConnect() {
