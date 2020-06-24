@@ -122,7 +122,7 @@ public class BleActivity extends AppCompatActivity {
             obj.put("data", content);
         } catch (JSONException e) {
             e.printStackTrace();
-            addLogs(e.toString());
+            addLogs(e.toString(),false);
         }
         MSG = obj.toString();
         return content;
@@ -132,7 +132,7 @@ public class BleActivity extends AppCompatActivity {
     private void joinChannel() {
         if (mSocket != null && mSocket.connected()) {
             mSocket.emit("join", CHANNEL);
-            addLogs("join: " + CHANNEL);
+            addLogs("join: " + CHANNEL,false);
 
             //startTimer();
         }
@@ -142,15 +142,13 @@ public class BleActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (mSocket == null) {
-                    socketConnect();
-                } else {
-                    if (mSocket.connected()) {
-                        mSocket.emit("data", s);
-                        addLogs("mSocket send: " + s);
-                    }
-                }
 
+                    if (mSocket !=null&&  mSocket.connected()) {
+                        mSocket.emit("data", s);
+                        addLogs("mSocket send: " + s,false);
+                    }else{
+                        socketConnect();
+                    }
             }
         });
     }
@@ -165,7 +163,7 @@ public class BleActivity extends AppCompatActivity {
             mSocket = IO.socket("http://socket.viatomtech.com.cn/", opts);
         } catch (URISyntaxException e) {
             e.printStackTrace();
-            addLogs(e.toString());
+            addLogs(e.toString(),false);
         }
 
         mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
@@ -173,7 +171,7 @@ public class BleActivity extends AppCompatActivity {
             @Override
             public void call(Object... args) {
 //                mSocket.emit("foo", "hi");
-                addLogs("mSocket connected");
+                addLogs("mSocket connected",false);
                 /****连接成功*******/
                 joinChannel();
 
@@ -184,15 +182,8 @@ public class BleActivity extends AppCompatActivity {
 
             @Override
             public void call(Object... args) {
-                String s = (String) args[0];
-//                try {
-//                    JSONObject object = new JSONObject(s);
-//                    onDataReceived(object);
-//                } catch (JSONException e) {
-//                    addLogs(e.toString());
-//                }
-//                addLogs("receive: " + object.toString());
-                addLogs("mSocket receive: " + args[0]);
+
+                addLogs("mSocket receive: " + args[0],false);
             }
 
         });
@@ -200,20 +191,20 @@ public class BleActivity extends AppCompatActivity {
 
             @Override
             public void call(Object... args) {
-                addLogs("mSocket disconnected");
+                addLogs("mSocket disconnected",false);
             }
 
         });
         mSocket.on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                addLogs("mSocket connect error");
+                addLogs("mSocket connect error",false);
             }
         });
         mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                addLogs("mSocket connect timeout");
+                addLogs("mSocket connect timeout",false);
             }
         });
 
@@ -221,16 +212,7 @@ public class BleActivity extends AppCompatActivity {
     }
 
 
-    private void onDataReceived(JSONObject obj) {
-        String channel = obj.optString("channel");
-        String name = obj.optString("name");
-        String dataTyoe = obj.optString("dataType");
-        String b64str = obj.optString("data");
 
-        byte[] waveBytes = Base64.decode(b64str, Base64.DEFAULT);
-        Wavedata data = new Wavedata(waveBytes);
-        DataController.receive(data.getFs());
-    }
 
     /****添加socket代码end*******/
 
@@ -443,15 +425,20 @@ public class BleActivity extends AppCompatActivity {
 
     }
 
+    private void addLogs(String s){
+        addLogs(s,true);
+    }
 
-    private void addLogs(String s) {
+    private void addLogs(String s,boolean isSetSummary) {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
         String time = format.format(System.currentTimeMillis());
 
         runOnUiThread(() -> {
-            //setMyLogs();
-            String sumText = String.format("尝试连接次数：%1$d \n连接成功次数：%2$d \n发送命令次数：%3$d \n收到响应次数：%4$d", tryConnect, connectFinsihed, cmdSent, sum / getDeviceParam());
-            summary.setText(sumText);
+            if(isSetSummary){
+                String sumText = String.format("尝试连接次数：%1$d \n连接成功次数：%2$d \n发送命令次数：%3$d \n收到响应次数：%4$d", tryConnect, connectFinsihed, cmdSent, sum / getDeviceParam());
+                summary.setText(sumText);
+            }
+
             logs.add(0, time + " " + s);
             if (logs.size() > 20) {
                 logs.remove(logs.size() - 1);
