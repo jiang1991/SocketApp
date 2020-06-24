@@ -137,6 +137,13 @@ public class BleActivity extends AppCompatActivity {
         }
     }
 
+    private void sendMsg(String s) {
+        if (mSocket != null && mSocket.connected()) {
+            mSocket.emit("data", s);
+            addLogs("send: " + s);
+        }
+
+    }
 
     public void socketConnect() {
         IO.Options opts = new IO.Options();
@@ -157,6 +164,9 @@ public class BleActivity extends AppCompatActivity {
             public void call(Object... args) {
 //                mSocket.emit("foo", "hi");
                 addLogs("connected");
+                /****连接成功*******/
+                joinChannel();
+                sendMsg(MSG);
             }
 
         });
@@ -259,6 +269,8 @@ public class BleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ble);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         ButterKnife.bind(this);
+
+        iniMsg();
 
         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         int REQUEST_ENABLE_BT = 1;
@@ -420,20 +432,7 @@ public class BleActivity extends AppCompatActivity {
     }
 
 
-    private void setMyLogs() {
-       StringBuffer  sb= new StringBuffer("");
-         if (typeOfDevice == 1) {
-            //ER1
-            sb.append("ER1");
 
-        } else if (typeOfDevice == 2) {
-            //checkme
-            sb.append("checkme");
-        }
-        sb.append(" ");
-        sb.append(getDeviceParam());
-        Log.i(TAG,sb.toString());
-    }
 
     private void addLogs(String s) {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
