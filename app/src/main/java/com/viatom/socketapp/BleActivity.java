@@ -383,6 +383,7 @@ public class BleActivity extends AppCompatActivity {
 
     private void reSocketConnect(){
         Log.i(TAG,"reSocketConnect");
+        //
         handler.sendEmptyMessageDelayed(201,1000);
     }
 
