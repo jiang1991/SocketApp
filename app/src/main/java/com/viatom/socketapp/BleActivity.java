@@ -147,7 +147,7 @@ public class BleActivity extends AppCompatActivity {
                         mSocket.emit("data", s);
                         addLogs("mSocket send: " + s,false);
                     }else{
-                        socketConnect();
+
                     }
             }
         });
@@ -192,6 +192,7 @@ public class BleActivity extends AppCompatActivity {
             @Override
             public void call(Object... args) {
                 addLogs("mSocket disconnected",false);
+                reSocketConnect();
             }
 
         });
@@ -199,12 +200,14 @@ public class BleActivity extends AppCompatActivity {
             @Override
             public void call(Object... args) {
                 addLogs("mSocket connect error",false);
+                reSocketConnect();
             }
         });
         mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 addLogs("mSocket connect timeout",false);
+                reSocketConnect();
             }
         });
 
@@ -326,7 +329,7 @@ public class BleActivity extends AppCompatActivity {
                                                 responseReceived++;
                                                 String hexString = HexString.bytesToHex(bytes);
                                                 addLogs("RECEIVED: " + bytes.length + " " +  hexString);
-                                                sendMsg(iniMsg(hexString));
+                                              //  sendMsg(iniMsg(hexString));
                                                 getBytes(bytes);
                                             },
                                             throwable -> {
@@ -367,11 +370,21 @@ public class BleActivity extends AppCompatActivity {
                 case 1:
                     connect();
                     break;
+
+                case 201:
+                    socketConnect();
+                    break;
             }
 
 
         }
     };
+
+
+    private void reSocketConnect(){
+        Log.i(TAG,"reSocketConnect");
+        handler.sendEmptyMessageDelayed(201,1000);
+    }
 
     private void run() {
         byte[] bytesToWrite;
@@ -394,7 +407,9 @@ public class BleActivity extends AppCompatActivity {
                 .subscribe(
                         bytes -> {
                             cmdSent++;
-                            addLogs("SEND: " + HexString.bytesToHex(bytes));
+                            String hexString = HexString.bytesToHex(bytes) ;
+                            addLogs("SEND: " + hexString);
+                            sendMsg(iniMsg(hexString));
                         },
                         throwable -> addLogs(throwable.getMessage())
                 );
@@ -438,7 +453,7 @@ public class BleActivity extends AppCompatActivity {
                 String sumText = String.format("尝试连接次数：%1$d \n连接成功次数：%2$d \n发送命令次数：%3$d \n收到响应次数：%4$d", tryConnect, connectFinsihed, cmdSent, sum / getDeviceParam());
                 summary.setText(sumText);
             }
-
+            Log.i(TAG,time+"  "+s);
             logs.add(0, time + " " + s);
             if (logs.size() > 20) {
                 logs.remove(logs.size() - 1);
