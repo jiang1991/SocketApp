@@ -112,19 +112,20 @@ public class BleActivity extends AppCompatActivity {
 
     /****添加socket代码begin*******/
 
-    private void iniMsg() {
+    private String iniMsg(String content) {
         JSONObject obj = new JSONObject();
         try {
             obj.put("channel", CHANNEL);
 //            obj.put("sn", "123456");
             obj.put("name", CHANNEL);
             obj.put("dataType", "pulse wave");
-            obj.put("data", "I am base64string");
+            obj.put("data", content);
         } catch (JSONException e) {
             e.printStackTrace();
             addLogs(e.toString());
         }
         MSG = obj.toString();
+        return content;
     }
 
 
@@ -138,11 +139,20 @@ public class BleActivity extends AppCompatActivity {
     }
 
     private void sendMsg(String s) {
-        if (mSocket != null && mSocket.connected()) {
-            mSocket.emit("data", s);
-            addLogs("send: " + s);
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mSocket == null) {
+                    socketConnect();
+                } else {
+                    if (mSocket.connected()) {
+                        mSocket.emit("data", s);
+                        addLogs("mSocket send: " + s);
+                    }
+                }
 
+            }
+        });
     }
 
     public void socketConnect() {
@@ -166,7 +176,7 @@ public class BleActivity extends AppCompatActivity {
                 addLogs("connected");
                 /****连接成功*******/
                 joinChannel();
-                sendMsg(MSG);
+
             }
 
         });
@@ -175,14 +185,14 @@ public class BleActivity extends AppCompatActivity {
             @Override
             public void call(Object... args) {
                 String s = (String) args[0];
-                try {
-                    JSONObject object = new JSONObject(s);
-                    onDataReceived(object);
-                } catch (JSONException e) {
-                    addLogs(e.toString());
-                }
+//                try {
+//                    JSONObject object = new JSONObject(s);
+//                    onDataReceived(object);
+//                } catch (JSONException e) {
+//                    addLogs(e.toString());
+//                }
 //                addLogs("receive: " + object.toString());
-                addLogs("receive: " + args[0]);
+                addLogs("mSocket receive: " + args[0]);
             }
 
         });
@@ -221,9 +231,8 @@ public class BleActivity extends AppCompatActivity {
         Wavedata data = new Wavedata(waveBytes);
         DataController.receive(data.getFs());
     }
+
     /****添加socket代码end*******/
-
-
 
 
     @OnClick(R.id.ble_connect)
@@ -270,7 +279,8 @@ public class BleActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         ButterKnife.bind(this);
 
-        iniMsg();
+
+        socketConnect();
 
         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         int REQUEST_ENABLE_BT = 1;
@@ -332,7 +342,9 @@ public class BleActivity extends AppCompatActivity {
                                     .subscribe(
                                             bytes -> {
                                                 responseReceived++;
-                                                addLogs("RECEIVED: " + bytes.length + " " + HexString.bytesToHex(bytes));
+                                                String hexString = HexString.bytesToHex(bytes);
+                                                addLogs("RECEIVED: " + bytes.length + " " +  hexString);
+                                                sendMsg(iniMsg(hexString));
                                                 getBytes(bytes);
                                             },
                                             throwable -> {
@@ -432,8 +444,6 @@ public class BleActivity extends AppCompatActivity {
     }
 
 
-
-
     private void addLogs(String s) {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
         String time = format.format(System.currentTimeMillis());
@@ -443,8 +453,8 @@ public class BleActivity extends AppCompatActivity {
             String sumText = String.format("尝试连接次数：%1$d \n连接成功次数：%2$d \n发送命令次数：%3$d \n收到响应次数：%4$d", tryConnect, connectFinsihed, cmdSent, sum / getDeviceParam());
             summary.setText(sumText);
             logs.add(0, time + " " + s);
-            if(logs.size()>20){
-                logs.remove(logs.size()-1);
+            if (logs.size() > 20) {
+                logs.remove(logs.size() - 1);
             }
             adapter.notifyDataSetChanged();
 
