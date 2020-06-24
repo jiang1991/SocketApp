@@ -70,7 +70,7 @@ public class BleActivity extends AppCompatActivity {
     private ArrayList<String> logs = new ArrayList<String>();
     ArrayAdapter<String> adapter;
 
-    private int sum = 0;
+    private long sum = 0;
     private long start, current = 0;
 
     private long tryConnect, connectFinsihed, cmdSent, responseReceived = 0;
@@ -323,6 +323,9 @@ public class BleActivity extends AppCompatActivity {
             String sumText = String.format("尝试连接次数：%1$d \n连接成功次数：%2$d \n发送命令次数：%3$d \n收到响应次数：%4$d", tryConnect, connectFinsihed, cmdSent, sum / getDeviceParam());
             summary.setText(sumText);
             logs.add(0, time + " " + s);
+            if(logs.size()>20){
+                logs.remove(logs.size()-1);
+            }
             adapter.notifyDataSetChanged();
 
         });
