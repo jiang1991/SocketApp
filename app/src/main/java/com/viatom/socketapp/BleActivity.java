@@ -45,7 +45,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.UUID;
-
+/****测试代码*******/
 public class BleActivity extends AppCompatActivity {
 
 
