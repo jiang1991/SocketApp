@@ -22,6 +22,7 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -120,6 +121,9 @@ public class BleActivity extends AppCompatActivity {
 
     @BindView(R.id.logs)
     ListView logView;
+
+    @BindView(R.id.et_er1_address)
+    EditText etER1Address;
 
     String TAG = "BleActivity";
 
@@ -271,11 +275,11 @@ public class BleActivity extends AppCompatActivity {
     @OnCheckedChanged(R.id.check_is_full_speed)
     void isFullSpeedChecked(CompoundButton button, boolean checked) {
         Log.i(TAG, "isFullSpeedChecked -> " + checked);
-//        if (checked) {
-//            isFullSpeed = true;
-//        } else {
-//            isFullSpeed = false;
-//        }
+        if (checked) {
+            isFullSpeed = true;
+        } else {
+            isFullSpeed = false;
+        }
     }
 
     @OnCheckedChanged(R.id.check_pro)
@@ -292,6 +296,8 @@ public class BleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ble);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         ButterKnife.bind(this);
+
+        etER1Address.setText(macAddrEr1);
 
         queue = Volley.newRequestQueue(this);
 
@@ -329,6 +335,7 @@ public class BleActivity extends AppCompatActivity {
         if (checkPro.isChecked()) {
             rxBleDevice = rxBleClient.getBleDevice(macAddrPro);
         } else {
+            macAddrEr1 =  etER1Address.getText().toString().trim() ;
             rxBleDevice = rxBleClient.getBleDevice(macAddrEr1);
         }
 

@@ -33,6 +33,13 @@
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
+    <EditText
+        android:id="@+id/et_er1_address"
+        android:hint="请输入ER1的Mac地址"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
     <LinearLayout
         android:layout_marginTop="4dp"
         android:layout_width="match_parent"
