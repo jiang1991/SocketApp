@@ -26,6 +26,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.polidea.rxandroidble2.RxBleClient;
 import com.polidea.rxandroidble2.RxBleConnection;
 import com.polidea.rxandroidble2.RxBleDevice;
@@ -61,8 +67,9 @@ public class BleActivity extends AppCompatActivity {
     // lepu 0449 "F1:30:30:34:34:39"
 
     // "F8:97:C4:40:B5:0C"-> ER1 0244
-    private String macAddrPro = "F2:31:30:30:30:36";
-    private String macAddrEr1 = "F8:97:C4:40:B5:0C";
+    // "D1:DC:62:F2:6B:92" -> ER1 0020
+    private String macAddrPro = "FC:9D:9F:AD:9C:B4";
+    private String macAddrEr1 = "D1:DC:62:F2:6B:92";
 
     /****是否是全速跑*******/
     private boolean isFullSpeed = false;
@@ -87,8 +94,14 @@ public class BleActivity extends AppCompatActivity {
     private long sum = 0;
     private long start, current = 0;
 
-    private long tryConnect, connectFinsihed, cmdSent, responseReceived = 0;
+    private long tryConnect, connectFinsihed, cmdSent, responseReceived, volleyIndex = 0;
     private boolean connected = false;
+
+    // volley
+    RequestQueue queue;
+    String url ="http://api.viatomtech.com.cn/json.php";
+    // Request a string response from the provided URL.
+    StringRequest stringRequest;
 
     private byte[] cmd_pro = new byte[8];
     private byte[] cmd_er1 = new byte[8];
@@ -279,8 +292,23 @@ public class BleActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         ButterKnife.bind(this);
 
+        queue = Volley.newRequestQueue(this);
 
-        socketConnect();
+        stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+                        volleyIndex++;
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // do nothing
+            }
+        });
+
+//        socketConnect();
 
         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         int REQUEST_ENABLE_BT = 1;
@@ -344,7 +372,7 @@ public class BleActivity extends AppCompatActivity {
                                                 responseReceived++;
                                                 String hexString = HexString.bytesToHex(bytes);
                                                 addLogs("RECEIVED: " + bytes.length + " " +  hexString);
-                                                sendMsg(iniMsg(hexString));
+//                                                sendMsg(iniMsg(hexString));
                                                 getBytes(bytes);
                                             },
                                             throwable -> {
@@ -378,6 +406,7 @@ public class BleActivity extends AppCompatActivity {
                         } else {
                             /****定时跑*******/
                             handler.sendEmptyMessageDelayed(0, 500);
+                            queue.add(stringRequest);
                         }
 
                     }
@@ -450,7 +479,7 @@ public class BleActivity extends AppCompatActivity {
 
         runOnUiThread(() -> {
             //setMyLogs();
-            String sumText = String.format("尝试连接次数：%1$d \n连接成功次数：%2$d \n发送命令次数：%3$d \n收到响应次数：%4$d", tryConnect, connectFinsihed, cmdSent, sum / getDeviceParam());
+            String sumText = String.format("尝试连接次数：%1$d \n连接成功次数：%2$d \n发送命令次数：%3$d \n收到响应次数：%4$d \n网络请求成功次数：%5$d", tryConnect, connectFinsihed, cmdSent, sum / getDeviceParam(), volleyIndex);
             summary.setText(sumText);
             logs.add(0, time + " " + s);
             if (logs.size() > 20) {
