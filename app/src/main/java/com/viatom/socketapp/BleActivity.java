@@ -70,7 +70,7 @@ public class BleActivity extends AppCompatActivity {
     // "D1:DC:62:F2:6B:92" -> ER1 0020
     // "FC:9D:9F:AD:9C:B4"   ->  ER1 0020
     private String macAddrPro = "FC:9D:9F:AD:9C:B4";
-    private String macAddrEr1 = "FC:9D:9F:AD:9C:B4";
+    private String macAddrEr1 = "F8:97:C4:40:B5:0C";
 
     /****是否是全速跑*******/
     private boolean isFullSpeed = false;
@@ -271,11 +271,11 @@ public class BleActivity extends AppCompatActivity {
     @OnCheckedChanged(R.id.check_is_full_speed)
     void isFullSpeedChecked(CompoundButton button, boolean checked) {
         Log.i(TAG, "isFullSpeedChecked -> " + checked);
-        if (checked) {
-            isFullSpeed = true;
-        } else {
-            isFullSpeed = false;
-        }
+//        if (checked) {
+//            isFullSpeed = true;
+//        } else {
+//            isFullSpeed = false;
+//        }
     }
 
     @OnCheckedChanged(R.id.check_pro)
