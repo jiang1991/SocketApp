@@ -68,6 +68,7 @@ public class BleActivity extends AppCompatActivity {
 
     // "F8:97:C4:40:B5:0C"-> ER1 0244
     // "D1:DC:62:F2:6B:92" -> ER1 0020
+    // "FC:9D:9F:AD:9C:B4"   ->  ER1 0020
     private String macAddrPro = "FC:9D:9F:AD:9C:B4";
     private String macAddrEr1 = "D1:DC:62:F2:6B:92";
 
