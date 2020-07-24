@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> logs = new ArrayList<String>();
     ArrayAdapter<String> adapter;
 
-    private String CHANNEL = "SleepO2 0001";
+    private String CHANNEL = "1810340040";
     private String MSG = "";
 
     private static Timer waveTimer;
