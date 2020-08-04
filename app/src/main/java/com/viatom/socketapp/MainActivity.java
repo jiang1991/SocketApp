@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
@@ -28,6 +29,7 @@ import android.util.Base64;
 import android.widget.RelativeLayout;
 
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.StringUtils;
 
 import java.util.Locale;
 import java.util.Timer;
@@ -39,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.logs)
     ListView logView;
+
+    @BindView(R.id.et_channel)
+    EditText etChannel;
 
 //    @BindView(R.id.oxiview)
 //    OxiView oxiView;
@@ -61,6 +66,11 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.join)
     void join() {
+        String joinString = this.etChannel.getText().toString().trim();
+        if (StringUtils.isEmpty(joinString)) {
+            return;
+        }
+        this.CHANNEL = joinString;
         joinChannel();
     }
 
@@ -233,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void call(Object... args) {
                 String result = (String) args[0];
-                LogUtils.i("heartbeat:"+ result);
+                LogUtils.i("heartbeat:" + result);
             }
         });
 
