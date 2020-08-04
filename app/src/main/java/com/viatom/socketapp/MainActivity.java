@@ -1,6 +1,7 @@
 package com.viatom.socketapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -22,8 +23,11 @@ import org.json.JSONObject;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+
 import android.util.Base64;
 import android.widget.RelativeLayout;
+
+import com.blankj.utilcode.util.LogUtils;
 
 import java.util.Locale;
 import java.util.Timer;
@@ -135,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 float[] temp = DataController.draw(5);
                 if (temp != null) {
                     DataController.feed(temp);
-                    runOnUiThread(()->oxiView.invalidate());
+                    runOnUiThread(() -> oxiView.invalidate());
                 }
             }
         };
@@ -163,8 +167,8 @@ public class MainActivity extends AppCompatActivity {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
         String time = format.format(System.currentTimeMillis());
 
-        runOnUiThread(()->{
-            logs.add(0,time + " " + s);
+        runOnUiThread(() -> {
+            logs.add(0, time + " " + s);
             adapter.notifyDataSetChanged();
         });
     }
@@ -224,6 +228,15 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
+
+        mSocket.on("heartbeat", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                String result = (String) args[0];
+                LogUtils.i("heartbeat:"+ result);
+            }
+        });
+
         mSocket.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
 
             @Override
