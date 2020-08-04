@@ -5,6 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -34,6 +39,7 @@ import com.blankj.utilcode.util.StringUtils;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -191,6 +197,41 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void sendHeartBeatMsg() {
+        if (mSocket != null && mSocket.connected()) {
+            mSocket.emit("heartbeat", "heartbeat");
+        }
+    }
+
+    private Disposable heartBeatDisposable;
+
+    private void  stopHeartBeat(){
+        if(heartBeatDisposable!=null && !heartBeatDisposable.isDisposed()){
+            heartBeatDisposable.dispose();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopHeartBeat();
+    }
+
+    private void startHeartBeat() {
+        stopHeartBeat();
+        heartBeatDisposable = Observable.interval(0, 1, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Long>() {
+                    @Override
+                    public void accept(Long aLong) throws Exception {
+                         sendHeartBeatMsg();
+                    }
+                })
+        ;
+
+    }
+
     private void joinChannel() {
         if (mSocket != null && mSocket.connected()) {
             mSocket.emit("join", CHANNEL);
@@ -269,5 +310,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mSocket.connect();
+
+        startHeartBeat();
     }
 }
