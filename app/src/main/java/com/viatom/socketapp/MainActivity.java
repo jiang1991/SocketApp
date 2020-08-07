@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 long timeLong = Long.parseLong(time);
                 long delayTime = System.currentTimeMillis() - timeLong;
-                tvTime.setText("delayTime:"+delayTime);
+                tvTime.setText("delayTime:"+delayTime+" ms");
             }
         })
         ;
