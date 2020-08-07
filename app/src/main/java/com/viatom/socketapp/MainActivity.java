@@ -2,9 +2,6 @@ package com.viatom.socketapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -17,6 +14,7 @@ import io.socket.emitter.Emitter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -32,6 +30,7 @@ import java.util.ArrayList;
 
 import android.util.Base64;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
@@ -45,10 +44,12 @@ public class MainActivity extends AppCompatActivity {
 
     private Socket mSocket;
 
-    @BindView(R.id.logs)
+    // @BindView(R.id.logs)
     ListView logView;
 
-    @BindView(R.id.et_channel)
+    TextView tvTime;
+
+    // @BindView(R.id.et_channel)
     EditText etChannel;
 
 //    @BindView(R.id.oxiview)
@@ -60,17 +61,17 @@ public class MainActivity extends AppCompatActivity {
     ArrayAdapter<String> adapter;
 
     private String CHANNEL = "1810340040";
-    private String MSG = "";
+    //private String MSG = "";
 
     private static Timer waveTimer;
     private static TimerTask waveTask;
 
-    @OnClick(R.id.send)
-    void sendMsg() {
-        sendMsg(MSG);
-    }
+//    @OnClick(R.id.send)
+//    void sendMsg() {
+//        sendMsg(MSG);
+//    }
 
-    @OnClick(R.id.join)
+    //@OnClick(R.id.join)
     void join() {
         String joinString = this.etChannel.getText().toString().trim();
         if (StringUtils.isEmpty(joinString)) {
@@ -80,16 +81,16 @@ public class MainActivity extends AppCompatActivity {
         joinChannel();
     }
 
-    @OnClick(R.id.connect)
+    //@OnClick(R.id.connect)
     void connect() {
         socketConnect();
     }
 
-    @OnClick(R.id.bt)
-    void intoBle() {
-        startActivity(new Intent(this, BleActivity.class));
-        finish();
-    }
+//    @OnClick(R.id.bt)
+//    void intoBle() {
+//        startActivity(new Intent(this, BleActivity.class));
+//        finish();
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,13 +98,79 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        ButterKnife.bind(this);
+        initView();
+        //ButterKnife.bind(this);
 
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, logs);
         logView.setAdapter(adapter);
 
-        iniMsg();
+
+        // iniMsg();
         loadOxiView();
+    }
+
+    private void initView() {
+        /***
+
+         @BindView(R.id.logs) ListView logView;
+
+         @BindView(R.id.et_channel) EditText etChannel;
+
+
+         @OnClick(R.id.join) void join() {
+         String joinString = this.etChannel.getText().toString().trim();
+         if (StringUtils.isEmpty(joinString)) {
+         return;
+         }
+         this.CHANNEL = joinString;
+         joinChannel();
+         }
+
+         @OnClick(R.id.connect) void connect() {
+         socketConnect();
+         }
+         *****/
+        logView = findViewById(R.id.logs);
+        etChannel = findViewById(R.id.et_channel);
+        tvTime = findViewById(R.id.tv_time);
+
+
+        findViewById(R.id.join).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                join();
+            }
+        });
+
+        findViewById(R.id.connect).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                socketConnect();
+            }
+        });
+    }
+
+    /***
+     计算延时时间
+     *****/
+    private void calculateDelayTime(String time) {
+        Observable.just(0)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Consumer<Integer>() {
+            @Override
+            public void accept(Integer integer) throws Exception {
+                if (StringUtils.isEmpty(time)) {
+                    return;
+                }
+                long timeLong = Long.parseLong(time);
+                long delayTime = System.currentTimeMillis() - timeLong;
+                tvTime.setText("delayTime:"+delayTime);
+            }
+        })
+        ;
+
+
     }
 
     private void onDataReceived(JSONObject obj) {
@@ -111,7 +178,8 @@ public class MainActivity extends AppCompatActivity {
         String name = obj.optString("name");
         String dataTyoe = obj.optString("dataType");
         String b64str = obj.optString("data");
-
+        String time = obj.optString("time");
+        calculateDelayTime(time);
         byte[] waveBytes = Base64.decode(b64str, Base64.DEFAULT);
         Wavedata data = new Wavedata(waveBytes);
         DataController.receive(data.getFs());
@@ -131,20 +199,20 @@ public class MainActivity extends AppCompatActivity {
         waveLayout.addView(oxiView);
     }
 
-    private void iniMsg() {
-        JSONObject obj = new JSONObject();
-        try {
-            obj.put("channel", CHANNEL);
-//            obj.put("sn", "123456");
-            obj.put("name", CHANNEL);
-            obj.put("dataType", "pulse wave");
-            obj.put("data", "I am base64string");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            addLogs(e.toString());
-        }
-        MSG = obj.toString();
-    }
+//    private void iniMsg() {
+//        JSONObject obj = new JSONObject();
+//        try {
+//            obj.put("channel", CHANNEL);
+////            obj.put("sn", "123456");
+//            obj.put("name", CHANNEL);
+//            obj.put("dataType", "pulse wave");
+//            obj.put("data", "I am base64string");
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            addLogs(e.toString());
+//        }
+//        MSG = obj.toString();
+//    }
 
     private void startTimer() {
         stopTimer();
@@ -205,8 +273,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Disposable heartBeatDisposable;
 
-    private void  stopHeartBeat(){
-        if(heartBeatDisposable!=null && !heartBeatDisposable.isDisposed()){
+    private void stopHeartBeat() {
+        if (heartBeatDisposable != null && !heartBeatDisposable.isDisposed()) {
             heartBeatDisposable.dispose();
         }
     }
@@ -225,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(Long aLong) throws Exception {
-                         sendHeartBeatMsg();
+                        sendHeartBeatMsg();
                     }
                 })
         ;
