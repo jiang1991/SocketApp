@@ -155,19 +155,19 @@ public class MainActivity extends AppCompatActivity {
      *****/
     private void calculateDelayTime(String time) {
         Observable.just(0)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Consumer<Integer>() {
-            @Override
-            public void accept(Integer integer) throws Exception {
-                if (StringUtils.isEmpty(time)) {
-                    return;
-                }
-                long timeLong = Long.parseLong(time);
-                long delayTime = System.currentTimeMillis() - timeLong;
-                tvTime.setText("delayTime:"+delayTime+" ms");
-            }
-        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Integer>() {
+                    @Override
+                    public void accept(Integer integer) throws Exception {
+                        if (StringUtils.isEmpty(time)) {
+                            return;
+                        }
+                        long timeLong = Long.parseLong(time);
+                        long delayTime = System.currentTimeMillis() - timeLong;
+                        tvTime.setText("delayTime:" + delayTime + " ms");
+                    }
+                })
         ;
 
 
@@ -176,7 +176,10 @@ public class MainActivity extends AppCompatActivity {
     private void onDataReceived(JSONObject obj) {
         String channel = obj.optString("channel");
         String name = obj.optString("name");
-        String dataTyoe = obj.optString("dataType");
+        String dataType = obj.optString("dataType");
+        if (!"pulse wave".equals(dataType)) {
+            return;
+        }
         String b64str = obj.optString("data");
         String time = obj.optString("time");
         calculateDelayTime(time);
@@ -267,7 +270,20 @@ public class MainActivity extends AppCompatActivity {
 
     private void sendHeartBeatMsg() {
         if (mSocket != null && mSocket.connected()) {
-            mSocket.emit("heartbeat", "heartbeat");
+            try {
+                JSONObject obj = new JSONObject();
+
+                obj.put("channel", this.CHANNEL);
+                obj.put("sn", this.CHANNEL);
+                obj.put("name", this.CHANNEL);
+                obj.put("dataType", "heartbeat");
+                //obj.put("data", "heartbeat")
+                obj.put("time", System.currentTimeMillis() + "");
+                mSocket.emit("data", obj.toString());
+            } catch (Exception e) {
+
+            }
+
         }
     }
 
