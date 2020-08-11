@@ -277,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
                 obj.put("sn", this.CHANNEL);
                 obj.put("name", this.CHANNEL);
                 obj.put("dataType", "heartbeat");
-                //obj.put("data", "heartbeat")
+                obj.put("data", "");
                 obj.put("time", System.currentTimeMillis() + "");
                 mSocket.emit("data", obj.toString());
             } catch (Exception e) {
