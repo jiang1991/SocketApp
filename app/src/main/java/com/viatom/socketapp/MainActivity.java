@@ -279,7 +279,7 @@ public class MainActivity extends AppCompatActivity {
                 obj.put("dataType", "heartbeat");
                 obj.put("data", "");
                 obj.put("time", System.currentTimeMillis() + "");
-                mSocket.emit("data", obj.toString());
+                mSocket.emit("heartbeat", obj.toString());
             } catch (Exception e) {
 
             }
