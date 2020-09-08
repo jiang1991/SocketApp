@@ -333,7 +333,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             // http://chat.socket.io  => http://socket.viatomtech.com.cn/socket.io/
-            mSocket = IO.socket("http://socket.viatomtech.com.cn/", opts);
+            mSocket = IO.socket(SocketUtils.Companion.getSOCKET_URL(), opts);
         } catch (URISyntaxException e) {
             e.printStackTrace();
             addLogs(e.toString());
