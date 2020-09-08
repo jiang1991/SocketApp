@@ -8,7 +8,7 @@ class SocketUtils {
         是否是外国环境
          *****/
         val isForeign = false
-        var SOCKET_URL = ""
+        var SOCKET_URL = "http://sockettest.viatomtech.com.cn/"
 
     }
 
