@@ -332,8 +332,7 @@ public class MainActivity extends AppCompatActivity {
         opts.reconnection = false;
 
         try {
-            // http://chat.socket.io  => http://socket.viatomtech.com.cn/socket.io/
-            mSocket = IO.socket(SocketUtils.Companion.getSOCKET_URL(), opts);
+            mSocket = IO.socket(JavaSocketUtils.SOCKET_URL, opts);
         } catch (URISyntaxException e) {
             e.printStackTrace();
             addLogs(e.toString());
