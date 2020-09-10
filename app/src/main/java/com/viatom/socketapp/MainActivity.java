@@ -44,16 +44,12 @@ public class MainActivity extends AppCompatActivity {
 
     private Socket mSocket;
 
-    // @BindView(R.id.logs)
     ListView logView;
 
     TextView tvTime;
 
-    // @BindView(R.id.et_channel)
     EditText etChannel;
 
-//    @BindView(R.id.oxiview)
-//    OxiView oxiView;
 
     private OxiView oxiView;
 
@@ -61,15 +57,11 @@ public class MainActivity extends AppCompatActivity {
     ArrayAdapter<String> adapter;
 
     private String CHANNEL = "1810340040";
-    //private String MSG = "";
+
 
     private static Timer waveTimer;
     private static TimerTask waveTask;
 
-//    @OnClick(R.id.send)
-//    void sendMsg() {
-//        sendMsg(MSG);
-//    }
 
     //@OnClick(R.id.join)
     void join() {
@@ -98,10 +90,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        JavaSocketUtils.initParams();
-        //SocketUtilsKt.initGlobalParams();
         initView();
-        //ButterKnife.bind(this);
 
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, logs);
         logView.setAdapter(adapter);
@@ -332,8 +321,10 @@ public class MainActivity extends AppCompatActivity {
         opts.forceNew = true;
         opts.reconnection = false;
 
+        String socketUrl = getResources().getString(R.string.SOCKET_URL);
+        LogUtils.i("socketUrl ->"+socketUrl);
         try {
-            mSocket = IO.socket(JavaSocketUtils.SOCKET_URL, opts);
+            mSocket = IO.socket(socketUrl, opts);
         } catch (URISyntaxException e) {
             e.printStackTrace();
             addLogs(e.toString());

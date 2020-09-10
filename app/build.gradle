@@ -15,7 +15,15 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+
+        debug{
+
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
         release {
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -31,12 +39,16 @@ android {
     flavorDimensions 'socket'
     productFlavors {
         socketForeign {
-            manifestPlaceholders socketAppName: 'socketAPPForeign', isForeign: 'yes'
+            manifestPlaceholders socketAppName: 'socketAPPForeign'
             dimension 'socket'
             applicationId 'com.viatom.socketappforeign'
+            resValue("string","isForeign","true")
+            resValue("string","SOCKET_URL","http://socket.viatomtech.com.cn/")
         }
         socketDemostic {
-            manifestPlaceholders socketAppName: 'socketAPPDemostic', isForeign:  'no'
+            resValue("string","isForeign","false")
+            resValue("string","SOCKET_URL","http://sockettest.viatomtech.com.cn/")
+            manifestPlaceholders socketAppName: 'socketAPPDemostic'
             dimension 'socket'
             applicationId 'com.viatom.socketappdemostic'
         }
