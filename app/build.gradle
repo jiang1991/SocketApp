@@ -1,11 +1,13 @@
 apply plugin: 'com.android.application'
-
+def releaseTime(){
+    return new Date().format("yyyy-MM-dd HH:mm:ss",TimeZone.getTimeZone("UTC"))
+}
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
     defaultConfig {
-        //国内版本  com.viatom.socketapp  国外版本 com.viatom.socketappforeign
-        applicationId "com.viatom.socketapp"
+        //国内版本  com.viatom.socketappdemostic  国外版本 com.viatom.socketappforeign
+        applicationId "com.viatom.socketappdemostic"
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 2
@@ -17,6 +19,8 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
+
     }
 
     // Butterknife requires Java 8.
@@ -24,6 +28,37 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    flavorDimensions 'socket'
+    productFlavors {
+        socketForeign {
+            manifestPlaceholders socketAppName: 'socketAPPForeign', isForeign: true
+            dimension 'socket'
+            applicationId 'com.viatom.socketappforeign'
+        }
+        socketDemostic {
+            manifestPlaceholders socketAppName: 'socketAPPDemostic', isForeign: false
+            dimension 'socket'
+            applicationId 'com.viatom.socketappdemostic'
+        }
+    }
+
+
+//    applicationVariants.all { variant ->
+//        variant.outputs.all {output->
+//            def  flavorName = variant.flavorName
+//            def  socketAppName= ""
+//            if(flavorName.equals("socketForeign")){
+//                socketAppName = "socketForeign"
+//            }else{
+//                socketAppName = "socketDemostic"
+//            }
+//
+//            def fileName =  socketAppName + "_VerName${defaultConfig.versionName}_VerCode${defaultConfig.versionCode}_${releaseTime()}_" +
+//                    variant.name +
+//                    ".apk"
+//            outputFileName = fileName
+//        }
+//    }
 }
 
 dependencies {

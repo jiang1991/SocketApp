@@ -1,5 +1,11 @@
 package com.viatom.socketapp;
 
+import android.os.Build;
+
+import com.blankj.utilcode.util.AppUtils;
+import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.Utils;
+
 public class JavaSocketUtils {
 
     /***
@@ -13,19 +19,19 @@ public class JavaSocketUtils {
     private static String SOCKET_URL_FOREIGN = "http://socket.viatomtech.com.cn/";
     private static String SOCKET_URL_DOMESTIC ="http://sockettest.viatomtech.com.cn/";
 
-    public static String SOCKET_URL = "http://sockettest.viatomtech.com.cn/";
+    public static String SOCKET_URL = "";
 
-    /***
-    是否是国外
-    *****/
-    public static boolean isForeign=false;
 
     public static void initParams(){
+        boolean isForeign = Utils.getApp().getApplicationInfo().metaData.getBoolean("isForeign") ;
+        LogUtils.i("isForeign->"+isForeign);
         if(isForeign){
             SOCKET_URL = SOCKET_URL_FOREIGN;
         }else{
             SOCKET_URL =  SOCKET_URL_DOMESTIC ;
         }
+
+
     }
 
 }
