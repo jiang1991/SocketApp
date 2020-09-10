@@ -4,6 +4,7 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
     defaultConfig {
+        //国内版本  com.viatom.socketapp  国外版本 com.viatom.socketappforeign
         applicationId "com.viatom.socketapp"
         minSdkVersion 19
         targetSdkVersion 29

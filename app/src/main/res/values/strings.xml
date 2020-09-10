@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">SocketApp</string>
+
+    <string name="socket_result_foreign">SocketResultForeign</string>
+    <string name="socket_result_domestic">SocketResultDeomestic</string>
 </resources>

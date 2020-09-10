@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        JavaSocketUtils.initParams();
         //SocketUtilsKt.initGlobalParams();
         initView();
         //ButterKnife.bind(this);
