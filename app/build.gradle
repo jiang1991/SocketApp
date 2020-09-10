@@ -31,12 +31,12 @@ android {
     flavorDimensions 'socket'
     productFlavors {
         socketForeign {
-            manifestPlaceholders socketAppName: 'socketAPPForeign', isForeign: true
+            manifestPlaceholders socketAppName: 'socketAPPForeign', isForeign: 'yes'
             dimension 'socket'
             applicationId 'com.viatom.socketappforeign'
         }
         socketDemostic {
-            manifestPlaceholders socketAppName: 'socketAPPDemostic', isForeign: false
+            manifestPlaceholders socketAppName: 'socketAPPDemostic', isForeign:  'no'
             dimension 'socket'
             applicationId 'com.viatom.socketappdemostic'
         }

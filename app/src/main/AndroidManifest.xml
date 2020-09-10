@@ -16,8 +16,6 @@
 <!--        <activity android:name=".BleActivity"-->
 <!--            android:screenOrientation="portrait" />-->
 
-        <meta-data android:name="isForeign" android:value="${isForeign}"/>
-
         <activity android:name=".MainActivity"
             android:screenOrientation="landscape" >
             <intent-filter>
