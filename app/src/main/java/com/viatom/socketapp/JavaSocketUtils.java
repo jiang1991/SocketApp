@@ -23,7 +23,7 @@ public class JavaSocketUtils {
 
 
     public static void initParams(){
-        boolean isForeign = Utils.getApp().getApplicationInfo().metaData.getBoolean("isForeign") ;
+        boolean isForeign = Utils.getApp().getApplicationInfo().metaData.getBoolean("isForeign",false) ;
         LogUtils.i("isForeign->"+isForeign);
         if(isForeign){
             SOCKET_URL = SOCKET_URL_FOREIGN;
