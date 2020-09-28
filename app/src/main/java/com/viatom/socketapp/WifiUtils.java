@@ -9,6 +9,7 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Parcelable;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
 
 public class WifiUtils {
@@ -71,11 +72,11 @@ public class WifiUtils {
                         NetworkInfo networkInfo = (NetworkInfo) parcelable;
                         NetworkInfo.State state = networkInfo.getState();
                         if (state == NetworkInfo.State.CONNECTED) {
-
+                            LogUtils.i("NetworkInfo.State.CONNECTED");
                             addOneWifiConnectCount();
                             currentStatus = 1;
                         } else if (state == NetworkInfo.State.DISCONNECTED) {
-
+                            LogUtils.i("NetworkInfo.State.DISCONNECTED");
                             addOneWifiDisconnectCount();
                             currentStatus = 2;
                         }
