@@ -1,23 +1,34 @@
 package com.viatom.socketapp;
 
-import android.os.Build;
-
-import com.blankj.utilcode.util.AppUtils;
-import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.Utils;
-
 public class JavaSocketUtils {
 
-    /***
+    public int socketConnectCount = 0;
+    public int socketDisconnectCount = 0;
 
-     var SOCKET_URL_FOREIGN = "http://socket.viatomtech.com.cn/"
+    public int socketTimeoutCount = 0;
+    public int socketErrorCount = 0;
 
-     var SOCKET_URL_DOMESTIC ="http://sockettest.viatomtech.com.cn/"
+    public void addOneConnectCount() {
+        socketConnectCount += 1;
 
-     *****/
+    }
 
-    private static String SOCKET_URL_FOREIGN = "http://socket.viatomtech.com.cn/";
-    private static String SOCKET_URL_DOMESTIC ="http://sockettest.viatomtech.com.cn/";
+    public void addOneDisconnectCount() {
+        socketDisconnectCount += 1;
+    }
+
+    public void addOneTimeoutCount() {
+        socketTimeoutCount += 1;
+    }
+
+    public void addOneErrorCount() {
+        socketErrorCount += 1;
+    }
+
+    public String getString() {
+        return "socket connect->" + socketConnectCount + "  disconnect->" + socketDisconnectCount + " error->" + socketErrorCount + " "
+                + "timeout->" + socketTimeoutCount;
+    }
 
 
 }

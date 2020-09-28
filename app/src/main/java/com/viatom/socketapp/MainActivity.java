@@ -1,5 +1,6 @@
 package com.viatom.socketapp;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import io.reactivex.Observable;
@@ -11,6 +12,7 @@ import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -43,10 +45,13 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
 
     private Socket mSocket;
-
+    private JavaSocketUtils javaSocketUtils;
+    private WifiUtils wifiUtils;
     ListView logView;
 
     TextView tvTime;
+
+    TextView tvCount;
 
     EditText etChannel;
 
@@ -63,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
     private static TimerTask waveTask;
 
 
-    //@OnClick(R.id.join)
     void join() {
         String joinString = this.etChannel.getText().toString().trim();
         if (StringUtils.isEmpty(joinString)) {
@@ -73,22 +77,16 @@ public class MainActivity extends AppCompatActivity {
         joinChannel();
     }
 
-    //@OnClick(R.id.connect)
-    void connect() {
-        socketConnect();
-    }
-
-//    @OnClick(R.id.bt)
-//    void intoBle() {
-//        startActivity(new Intent(this, BleActivity.class));
-//        finish();
-//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        javaSocketUtils = new JavaSocketUtils();
+        wifiUtils = new WifiUtils();
+
+        wifiUtils.register(this);
 
         initView();
 
@@ -124,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         logView = findViewById(R.id.logs);
         etChannel = findViewById(R.id.et_channel);
         tvTime = findViewById(R.id.tv_time);
-
+        tvCount = findViewById(R.id.tv_count);
 
         findViewById(R.id.join).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,6 +137,27 @@ public class MainActivity extends AppCompatActivity {
                 socketConnect();
             }
         });
+
+        findViewById(R.id.tv_count).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCountDialog();
+            }
+        });
+    }
+
+    private void showCountDialog() {
+        new AlertDialog.Builder(this)
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setMessage(javaSocketUtils.getString()+" "+wifiUtils.getString())
+                .create()
+                .show();
+
     }
 
     /***
@@ -289,6 +308,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        wifiUtils.unRegister(this);
         stopHeartBeat();
     }
 
@@ -319,10 +339,10 @@ public class MainActivity extends AppCompatActivity {
     public void socketConnect() {
         IO.Options opts = new IO.Options();
         opts.forceNew = true;
-        opts.reconnection = false;
+        opts.reconnection = true;
 
         String socketUrl = getResources().getString(R.string.SOCKET_URL);
-        LogUtils.i("socketUrl ->"+socketUrl);
+        LogUtils.i("socketUrl ->" + socketUrl);
         try {
             mSocket = IO.socket(socketUrl, opts);
         } catch (URISyntaxException e) {
@@ -336,6 +356,7 @@ public class MainActivity extends AppCompatActivity {
             public void call(Object... args) {
 //                mSocket.emit("foo", "hi");
                 addLogs("connected");
+                javaSocketUtils.addOneConnectCount();
             }
 
         });
@@ -369,6 +390,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void call(Object... args) {
                 addLogs("disconnected");
+                javaSocketUtils.addOneDisconnectCount();
             }
 
         });
@@ -376,12 +398,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void call(Object... args) {
                 addLogs("connect error");
+                javaSocketUtils.addOneErrorCount();
             }
         });
         mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 addLogs("connect timeout");
+                javaSocketUtils.addOneTimeoutCount();
             }
         });
 
