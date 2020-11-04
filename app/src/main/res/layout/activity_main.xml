@@ -70,7 +70,7 @@
         android:layout_height="wrap_content" >
 
         <Button
-            android:text="Connect"
+            android:text="Conn"
             android:id="@+id/connect"
             android:layout_width="0dp"
             android:layout_weight="1"
@@ -86,6 +86,20 @@
         <Button
             android:id="@+id/send"
             android:text="Send"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/set"
+            android:text="SET"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/get"
+            android:text="GET"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"/>

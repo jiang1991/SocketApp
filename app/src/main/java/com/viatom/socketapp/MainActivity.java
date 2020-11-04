@@ -11,10 +11,8 @@ import io.socket.emitter.Emitter;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import org.json.JSONException;
@@ -48,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String CHANNEL = "SleepO2 0001";
     private String MSG = "";
+    private String VAL_PKG = "";
 
     private static Timer waveTimer;
     private static TimerTask waveTask;
@@ -73,6 +72,22 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
+    @OnClick(R.id.set)
+    void setVal() {
+        if (mSocket != null && mSocket.connected()) {
+            mSocket.emit("set", VAL_PKG);
+            addLogs("set: " + VAL_PKG);
+        }
+    }
+
+    @OnClick(R.id.get)
+    void getVal() {
+        if (mSocket != null && mSocket.connected()) {
+            mSocket.emit("get", VAL_PKG);
+//            addLogs("get: " + VAL_PKG);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
         logView.setAdapter(adapter);
 
         iniMsg();
+        iniHeartBeat();
         loadOxiView();
     }
 
@@ -126,6 +142,19 @@ public class MainActivity extends AppCompatActivity {
             addLogs(e.toString());
         }
         MSG = obj.toString();
+    }
+
+    private void iniHeartBeat() {
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("name", "get val");
+//            obj.put("sn", "123456");
+            obj.put("dataType", "lalalala");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            addLogs(e.toString());
+        }
+        VAL_PKG = obj.toString();
     }
 
     private void startTimer() {
@@ -198,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             // http://chat.socket.io  => http://socket.viatomtech.com.cn/socket.io/
-            mSocket = IO.socket("http://socket.viatomtech.com.cn/", opts);
+            mSocket = IO.socket("http://sockettest.viatomtech.com.cn/", opts);
         } catch (URISyntaxException e) {
             e.printStackTrace();
             addLogs(e.toString());
@@ -228,6 +257,14 @@ public class MainActivity extends AppCompatActivity {
                 addLogs("receive: " + args[0]);
             }
 
+        });
+        mSocket.on("get",  new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+                String s = (String) args[0];
+                addLogs("getVal: " + s);
+            }
         });
         mSocket.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
 
