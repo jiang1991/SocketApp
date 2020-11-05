@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> logs = new ArrayList<String>();
     ArrayAdapter<String> adapter;
 
-    private String CHANNEL = "SleepO2 0001";
+    private String CHANNEL = "18664972432";
     private String MSG = "";
     private String VAL_PKG = "";
 
@@ -72,19 +72,74 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    @OnClick(R.id.set)
+    @OnClick(R.id.signin)
     void setVal() {
         if (mSocket != null && mSocket.connected()) {
-            mSocket.emit("set", VAL_PKG);
-            addLogs("set: " + VAL_PKG);
+
+            JSONObject obj = new JSONObject();
+            try {
+                obj.put("type", "Signin");
+                obj.put("channel", CHANNEL);
+                obj.put("linkId", 12);
+                obj.put("clientSn", CHANNEL);
+                obj.put("clientName", "O2 1234");
+                obj.put("clientType", "Master");
+                obj.put("branchCode", "1231231231");
+                obj.put("version", "0.0.1");
+                obj.put("versionCode", "20");
+            } catch (JSONException e) {
+                e.printStackTrace();
+                addLogs(e.toString());
+            }
+            String signin = obj.toString();
+
+
+            mSocket.emit("Signin", signin);
+            addLogs("Signin: " + signin);
         }
     }
 
-    @OnClick(R.id.get)
+    @OnClick(R.id.update_state)
     void getVal() {
         if (mSocket != null && mSocket.connected()) {
-            mSocket.emit("get", VAL_PKG);
-//            addLogs("get: " + VAL_PKG);
+
+            JSONObject obj = new JSONObject();
+            try {
+                obj.put("type", "UpdateState");
+                obj.put("channel", CHANNEL);
+                obj.put("linkId", 12);
+                obj.put("wifiState", 1);
+                obj.put("bleState", 1);
+                obj.put("fingerDetect", 1);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                addLogs(e.toString());
+            }
+            String query = obj.toString();
+
+
+            mSocket.emit("UpdateState", query);
+            addLogs("UpdateState: " + query);
+        }
+    }
+
+    @OnClick(R.id.query_info)
+    void query_info() {
+        if (mSocket != null && mSocket.connected()) {
+
+            JSONObject obj = new JSONObject();
+            try {
+                obj.put("type", "QueryInfo");
+                obj.put("channel", CHANNEL);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                addLogs(e.toString());
+            }
+            String query = obj.toString();
+
+
+            mSocket.emit("QueryInfo", query);
+            addLogs("QueryInfo: " + query);
         }
     }
 
@@ -255,6 +310,33 @@ public class MainActivity extends AppCompatActivity {
                 }
 //                addLogs("receive: " + object.toString());
                 addLogs("receive: " + args[0]);
+            }
+
+        });
+        mSocket.on("Info", new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+                String s = (String) args[0];
+                addLogs("Info: " + s);
+            }
+
+        });
+        mSocket.on("ControlSend", new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+                String s = (String) args[0];
+                addLogs("ControlSend: " + s);
+            }
+
+        });
+        mSocket.on("ControlResponse", new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+                String s = (String) args[0];
+                addLogs("ControlResponse: " + s);
             }
 
         });

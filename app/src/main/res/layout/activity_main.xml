@@ -15,6 +15,7 @@
 
     <RelativeLayout
         android:id="@+id/rl_wave"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="250dp" />
 
@@ -67,49 +68,77 @@
         android:id="@+id/btns"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <Button
-            android:text="Conn"
-            android:id="@+id/connect"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <Button
-            android:text="Join"
-            android:id="@+id/join"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content" />
+            <Button
+                android:text="Conn"
+                android:id="@+id/connect"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
 
-        <Button
-            android:id="@+id/send"
-            android:text="Send"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"/>
+            <Button
+                android:text="Join"
+                android:id="@+id/join"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
 
-        <Button
-            android:id="@+id/set"
-            android:text="SET"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/send"
+                android:text="Send"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"/>
 
-        <Button
-            android:id="@+id/get"
-            android:text="GET"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/bt"
-            android:text="BLE"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content" />
+            <Button
+                android:id="@+id/signin"
+                android:text="Sign IN"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/update_state"
+                android:text="Update Sate"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/query_info"
+                android:text="Query Info"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/bt"
+                android:text="BLE"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
+
+
+
     </LinearLayout>
 
 </RelativeLayout>
