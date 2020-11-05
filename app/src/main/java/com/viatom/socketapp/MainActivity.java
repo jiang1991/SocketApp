@@ -142,6 +142,27 @@ public class MainActivity extends AppCompatActivity {
             addLogs("QueryInfo: " + query);
         }
     }
+    @OnClick(R.id.send_command)
+    void sendCommand() {
+        if (mSocket != null && mSocket.connected()) {
+
+            JSONObject obj = new JSONObject();
+            try {
+                obj.put("type", "ControlSend");
+                obj.put("channel", CHANNEL);
+                obj.put("command", 1);
+                obj.put("detail", "!23123123");
+            } catch (JSONException e) {
+                e.printStackTrace();
+                addLogs(e.toString());
+            }
+            String query = obj.toString();
+
+
+            mSocket.emit("ControlSend", query);
+            addLogs("ControlSend: " + query);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -328,6 +349,26 @@ public class MainActivity extends AppCompatActivity {
             public void call(Object... args) {
                 String s = (String) args[0];
                 addLogs("ControlSend: " + s);
+
+                if (mSocket != null && mSocket.connected()) {
+
+                    JSONObject obj = new JSONObject();
+                    try {
+                        obj.put("type", "ControlResponse");
+                        obj.put("channel", CHANNEL);
+                        obj.put("command", 1);
+                        obj.put("state", "ok");
+                        obj.put("detail", "i am response");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        addLogs(e.toString());
+                    }
+                    String query = obj.toString();
+
+
+                    mSocket.emit("ControlResponse", query);
+                    addLogs("ControlResponse: " + query);
+                }
             }
 
         });
