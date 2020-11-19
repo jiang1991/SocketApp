@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private String CHANNEL = "18664972432";
     private String MSG = "";
     private String VAL_PKG = "";
+    int code = 1;
 
     private static Timer waveTimer;
     private static TimerTask waveTask;
@@ -86,7 +87,8 @@ public class MainActivity extends AppCompatActivity {
                 obj.put("clientType", "Master");
                 obj.put("branchCode", "1231231231");
                 obj.put("version", "0.0.1");
-                obj.put("versionCode", "20");
+                obj.put("versionCode", code);
+                code++;
             } catch (JSONException e) {
                 e.printStackTrace();
                 addLogs(e.toString());
@@ -303,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             // http://chat.socket.io  => http://socket.viatomtech.com.cn/socket.io/
-            mSocket = IO.socket("http://sockettest.viatomtech.com.cn/", opts);
+            mSocket = IO.socket("http://socket.viatomtech.com.cn/", opts);
         } catch (URISyntaxException e) {
             e.printStackTrace();
             addLogs(e.toString());
